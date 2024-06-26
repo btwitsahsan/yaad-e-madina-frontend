@@ -1,25 +1,52 @@
-import React, { useState } from 'react';
-import { FaArrowLeft } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { CreateSubscriptionPlan } from '../../network/api';
-import Modal from '../../components/Modal';
+import React, { useState, useEffect } from "react";
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate, useParams } from "react-router-dom";
+import { getSubscriptionPlanById, updateSubscriptionPlan } from "../../network/api";
+import Modal from "../../components/Modal";
 
-const AddSubscriptionPlan: React.FC = () => {
+const EditSubscriptionPlan: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [planName, setPlanName] = useState('');
-  const [duration, setDuration] = useState('');
-  const [durationUnit, setDurationUnit] = useState('days');
-  const [price, setPrice] = useState('');
-  const [deviceLimit, setDeviceLimit] = useState('');
-  const [ads, setAds] = useState('1');
-  const [download, setDownload] = useState('1');
-  const [status, setStatus] = useState('active');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '', success: true });
+  const [planName, setPlanName] = useState("");
+  const [duration, setDuration] = useState("");
+  const [durationUnit, setDurationUnit] = useState("days");
+  const [price, setPrice] = useState("");
+  const [deviceLimit, setDeviceLimit] = useState("");
+  const [ads, setAds] = useState("1");
+  const [download, setDownload] = useState("1");
+  const [status, setStatus] = useState("active");
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<{ title: string; message: string }>({
+    title: "",
+    message: ""
+  });
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchSubscriptionPlan = async () => {
+      try {
+        const data = await getSubscriptionPlanById(id!);
+        setPlanName(data.name);
+        
+        const [value, unit] = data.duration.split(" ");
+        setDuration(value);
+        setDurationUnit(unit);
+        setPrice(data.price);
+        setDeviceLimit(data.deviceLimit);
+        setAds(data.ads);
+        setDownload(data.download);
+        setStatus(data.status);
+      } catch (error) {
+        console.error("Failed to fetch subscription plan", error);
+        setModalContent({ title: 'Error', message: 'Failed to fetch subscription plan' });
+        setModalVisible(true);
+      }
+    };
+    fetchSubscriptionPlan();
+  }, [id]);
+
   const handleBackClick = () => {
-    navigate(-1); // Navigate back to the previous route
+    navigate(-1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,18 +64,17 @@ const AddSubscriptionPlan: React.FC = () => {
     };
 
     try {
-      const resp = await CreateSubscriptionPlan(subscriptionPlanData);
-
-      if (resp.success) {
-        setModalContent({ title: 'Create Successful', message: 'Your Subscription Plan Has Been Created Successfully', success: true });
+      const response = await updateSubscriptionPlan(id!, subscriptionPlanData);
+      if (response.success) {
+        setModalContent({ title: "Update Successful", message: "Your Subscription Plan Has Been Updated Successfully" });
         setModalVisible(true);
       } else {
-        setModalContent({ title: 'Failed', message: 'Your Subscription Plan Has Not Been Created', success: false });
+        setModalContent({ title: "Failed", message: "Your Subscription Plan Has Not Been Updated" });
         setModalVisible(true);
       }
-    } catch (err) {
-      console.error(err);
-      setModalContent({ title: 'Error', message: 'Error while adding subscription plan', success: false });
+    } catch (error) {
+      console.error("Error while updating subscription plan", error);
+      setModalContent({ title: 'Error', message: 'Error while updating subscription plan' });
       setModalVisible(true);
     } finally {
       setIsLoading(false);
@@ -57,13 +83,7 @@ const AddSubscriptionPlan: React.FC = () => {
 
   const closeModal = () => {
     setModalVisible(false);
-  };
-
-  const confirmModal = () => {
-    setModalVisible(false);
-    if (modalContent.success) {
-      navigate('/subscription-plans');
-    }
+    navigate("/subscription-plans");
   };
 
   return (
@@ -109,9 +129,9 @@ const AddSubscriptionPlan: React.FC = () => {
               onChange={(e) => setDurationUnit(e.target.value)}
               className="w-full p-2 rounded bg-gray-700 text-white min-h-10"
             >
-              <option value="days">Day's</option>
-              <option value="months">Month's</option>
-              <option value="years">Year's</option>
+              <option value="days">Days</option>
+              <option value="months">Months</option>
+              <option value="years">Years</option>
             </select>
           </div>
         </div>
@@ -120,23 +140,15 @@ const AddSubscriptionPlan: React.FC = () => {
           <label htmlFor="price" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
             Price*
           </label>
-          <div className="w-full md:w-2/3 flex flex-col text-sm">
-            <input
-              placeholder="9.99"
-              type="text"
-              id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="p-2 rounded bg-gray-700 text-white min-h-10"
-              required
-            />
-            <span className="text-gray-500">
-              The minimum amount for processing a transaction through Stripe in USD is $0.50. For more info{' '}
-              <a className="text-blue-500 hover:text-blue-600" href="https://support.chargebee.com/support/solutions/articles/228511-transaction-amount-limit-in-stripe" target="_blank" rel="noopener noreferrer">
-                click here
-              </a>
-            </span>
-          </div>
+          <input
+            placeholder="9.99"
+            type="text"
+            id="price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
+            required
+          />
         </div>
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
@@ -202,7 +214,7 @@ const AddSubscriptionPlan: React.FC = () => {
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold"></label>
           <button type="submit" className="hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded" disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save'}
+            {isLoading ? 'Updating...' : 'Update'}
           </button>
         </div>
       </form>
@@ -212,11 +224,11 @@ const AddSubscriptionPlan: React.FC = () => {
           title={modalContent.title}
           message={modalContent.message}
           onClose={closeModal}
-          onConfirm={confirmModal}
+          onConfirm={closeModal}
         />
       )}
     </div>
   );
 };
 
-export default AddSubscriptionPlan;
+export default EditSubscriptionPlan;

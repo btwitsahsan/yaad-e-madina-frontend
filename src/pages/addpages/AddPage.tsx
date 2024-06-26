@@ -19,7 +19,7 @@ const customStyles = {
     height: "44px",
     color: "white",
     "&:hover": {
-      borderColor: "#2D3748", // Tailwind class hover:bg-gray-800
+      borderColor: "#2D3748", // Tailwind class hover:bg-primary-gray
     },
   }),
   menu: (provided: any) => ({
@@ -32,7 +32,7 @@ const customStyles = {
       ? "#2D3748"
       : state.isFocused
       ? "#2D3748"
-      : "#4A5568", // Tailwind class bg-gray-800 for selected and focused
+      : "#4A5568", // Tailwind class bg-primary-gray for selected and focused
     color: "white",
     "&:hover": {
       backgroundColor: "#B91C1C", // Tailwind class hover:bg-red-600
@@ -69,7 +69,7 @@ const AddPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex justify-start items-center">
         <button
           className="flex items-center gap-2 text-red-600 text-xl rounded p-2 font-bold"
@@ -83,14 +83,14 @@ const AddPage: React.FC = () => {
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label
             htmlFor="category-name"
-            className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold"
+            className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
           >
             Title*
           </label>
           <input
             type="text"
             id="category-name"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
 
@@ -98,7 +98,7 @@ const AddPage: React.FC = () => {
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label
             htmlFor="category-name"
-            className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold"
+            className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
           >
             Description
           </label>
@@ -136,14 +136,14 @@ const AddPage: React.FC = () => {
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label
             htmlFor="category-name"
-            className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold"
+            className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
           >
             Page Order
           </label>
           <input
             type="number"
             id="category-name"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
 
@@ -151,13 +151,13 @@ const AddPage: React.FC = () => {
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label
             htmlFor="category-status"
-            className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold"
+            className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
           >
             Status
           </label>
           <select
             id="category-status"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -165,10 +165,10 @@ const AddPage: React.FC = () => {
         </div>
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold"></label>
+          <label className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"></label>
           <button
             type="submit"
-            className=" hover:bg-red-700 bg-red-600 text-white font-bold py-2 px-4 rounded"
+            className=" hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
           >
             Save
           </button>

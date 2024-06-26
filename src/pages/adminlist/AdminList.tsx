@@ -12,7 +12,7 @@ const addAdminHandler=()=>{
   }
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex justify-between items-center">
         <div className="relative md:w-64">
           <span className="relative md:absolute inset-y-0 right-0 flex items-center pr-2 z-10">

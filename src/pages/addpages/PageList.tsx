@@ -17,7 +17,7 @@ const PageList: React.FC = () => {
     navigate('/addpage');
   }
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex justify-start items-center">
      
         <button className="bg-green-600 text-white rounded p-2 font-semibold"

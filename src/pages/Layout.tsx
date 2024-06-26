@@ -6,7 +6,7 @@ type LayoutProps = {
 };
 const Layout: React.FC<LayoutProps> = ({ children, sidebarToggle }) => {
   return (
-    <div className={`${sidebarToggle ? "" : "md:ml-64"}`}>
+    <div className={`${sidebarToggle ? "" : "md:ml-64"} mt-[4.1rem]`}>
       <div className={`p-4 min-h-[80vh]`}>
       {children}
     </div>

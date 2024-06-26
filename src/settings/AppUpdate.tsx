@@ -5,7 +5,7 @@ const AppUpdate: React.FC = () => {
     
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
      
 <form className="space-y-4 mt-5">
 
@@ -77,7 +77,7 @@ const AppUpdate: React.FC = () => {
           </label>
           <button
             type="submit"
-            className=" hover:bg-red-700 bg-red-600 text-white font-bold py-2 px-4 rounded"
+            className=" hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
           >
             Save Settings
           </button>

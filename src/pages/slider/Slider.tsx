@@ -18,7 +18,7 @@ const Slider: React.FC = () => {
   const items = Array.from(Array(10).keys());
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex justify-start items-center">
         <button className="bg-green-600 text-white rounded p-2 font-semibold"
         onClick={()=> addSliderHandler()}>
@@ -30,7 +30,7 @@ const Slider: React.FC = () => {
         {items.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col w-full md:w-[50%] lg:w-[40%] bg-slate-700 rounded-lg overflow-hidden"
+            className="flex flex-col w-full md:w-[50%] lg:w-[40%] bg-secondary-gray rounded-lg overflow-hidden"
           >
             <div className="w-full">
               <img

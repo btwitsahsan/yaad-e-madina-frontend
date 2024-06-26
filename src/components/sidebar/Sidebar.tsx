@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { MdBugReport, MdEmail, MdLibraryMusic, MdOutlineCategory, MdOutlineSettingsApplications } from "react-icons/md";
+import logoimg from './logo.png';
+import { MdLibraryMusic, MdOutlineCategory } from "react-icons/md";
 import { PiUsersThreeFill } from "react-icons/pi";
 import { BiPhotoAlbum } from "react-icons/bi";
 import { AiFillDashboard } from "react-icons/ai";
 import { GrTransaction } from "react-icons/gr";
-import { IoIosArrowDown, IoIosChatboxes } from "react-icons/io";
+import { IoIosArrowDown, IoIosChatboxes, IoIosSend } from "react-icons/io";
 import { RiPagesFill, RiSignalTowerFill } from "react-icons/ri";
 import { BsFillSignIntersectionSideFill } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
@@ -45,19 +46,20 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
   return (
     <div
       className={`${
-        sidebarToggle ? "-translate-x-64" : ""} w-64 h-full fixed bg-gray-800 py-2 transition-all duration-500 ease-in-out`}
+        sidebarToggle ? "-translate-x-64" : ""} w-64 h-screen fixed bg-primary-gray py-2 transition-all duration-500 ease-in-out`}
     >
-      <div className="my-2 mb-4">
-        <h1 className="text-2x text-white font-bold">Admin Dashboard</h1>
+      <div className="my-1 mb-4 flex justify-center items-center gap-3">
+      <img src={logoimg} alt="logo png" width="40px"/>
+        <h1 className="text-2xl text-white font-bold">Dashboard</h1>
       </div>
       <hr />
-      <div className="bg-black py-[0.4rem] h-[580px]" >
+      <div className="bg-black pt-3 h-full pb-14" >
       <Scrollbars autoHide >
-        <ul className="mt-3 text-white font-semibold flex flex-col gap-1">
-          <Link to="/" className="m-0 p-0">
+        <ul className=" text-white font-semibold text-sm flex flex-col">
+          <Link to="/" className="mb-1 p-0">
             <li
-              className={` rounded hover:shadow bg-gray-800 hover:text-red-600 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "dashboard" ? "bg-red-600 hover:text-white" : ""
+              className={` rounded hover:shadow bg-primary-gray hover:text-red-600 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "dashboard" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("dashboard")}
             >
@@ -65,10 +67,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Dashboard
             </li>
           </Link>
-          <Link to="/categories" className="m-0 p-0">
+          <Link to="/categories" className="mb-1 p-0">
             <li
-              className={` rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "categories" ? "bg-red-600 hover:text-white" : ""
+              className={` rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "categories" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("categories")}
             >
@@ -76,10 +78,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Categories
             </li>
           </Link>
-          <Link to="/naatkhawan" className="m-0 p-0">
+          <Link to="/naat-khawan" className="mb-1 p-0">
             <li
-              className={` rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "naatkhawan" ? "bg-red-600 hover:text-white" : ""
+              className={` rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "naatkhawan" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("naatkhawan")}
             >
@@ -87,10 +89,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Naat Khawan
             </li>
           </Link>
-          <Link to="/album" className="m-0 p-0">
+          <Link to="/album" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "album" ? "bg-red-600 hover:text-white" : ""
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "album" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("album")}
             >
@@ -103,10 +105,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
 
 
 
-          <Link to="/audios" className="m-0 p-0">
+          <Link to="/audios" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "audios" ? "bg-red-600 hover:text-white" : ""
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "audios" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("audios")}
             >
@@ -118,10 +120,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
         
         
         
-          <Link to="/playlist" className="m-0 p-0">
+          <Link to="/playlist" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "playlist" ? "bg-red-600 hover:text-white" : ""
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "playlist" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("playlist")}
             >
@@ -134,8 +136,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
 
 
           <li
-            className={` rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-              activeItem === "home" ? "bg-red-600 hover:text-white" : ""
+            className={`mb-1 rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+              activeItem === "home" ? "bg-primary-red hover:text-white" : ""
             }`}
             onClick={() => {
               handleItemClick("home");
@@ -158,10 +160,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
           </li>
           {showDropdown && (
             <ul className="pl-4 mt-2 ">
-              <Link to="/slider" className="m-0 p-0">
+              <Link to="/slider" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                    activeItem === "slider" ? "bg-red-600 hover:text-white" : ""
+                    activeItem === "slider" ? "bg-primary-red hover:text-white" : ""
                   }`}
                   onClick={() => handleItemClick("slider")}
                 >
@@ -169,11 +171,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
                   Slider
                 </li>
               </Link>
-              <Link to="/homesections" className="m-0 p-0">
+              <Link to="/homesections" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                     activeItem === "homesections"
-                      ? "bg-red-600 hover:text-white"
+                      ? "bg-primary-red hover:text-white"
                       : ""
                   }`}
                   onClick={() => handleItemClick("homesections")}
@@ -190,8 +192,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
 
 
           <li
-            className={` rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-              activeItem === "users" ? "bg-red-600 hover:text-white" : ""
+            className={`mb-1 rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+              activeItem === "users" ? "bg-primary-red hover:text-white" : ""
             }`}
             onClick={() => {
               handleItemClick("users");
@@ -214,10 +216,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
           </li>
           {showDropdown2 && (
             <ul className="pl-4 mt-2 ">
-              <Link to="/users" className="m-0 p-0">
+              <Link to="/users" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                    activeItem === "user" ? "bg-red-600 hover:text-white" : ""
+                    activeItem === "user" ? "bg-primary-red hover:text-white" : ""
                   }`}
                   onClick={() => handleItemClick("user")}
                 >
@@ -225,11 +227,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
                   Users
                 </li>
               </Link>
-              <Link to="/subadmin" className="m-0 p-0">
+              <Link to="/subadmin" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                     activeItem === "subadmin"
-                      ? "bg-red-600 hover:text-white"
+                      ? "bg-primary-red hover:text-white"
                       : ""
                   }`}
                   onClick={() => handleItemClick("subadmin")}
@@ -244,11 +246,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
 
 
           
-          <Link to="/subscriptionplan" className="m-0 p-0">
+          <Link to="/subscription-plans" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                 activeItem === "subscriptionplan"
-                  ? "bg-red-600 hover:text-white"
+                  ? "bg-primary-red hover:text-white"
                   : ""
               }`}
               onClick={() => handleItemClick("subscriptionplan")}
@@ -257,11 +259,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Subcription Plan
             </li>
           </Link>
-          <Link to="/transactions" className="m-0 p-0">
+          <Link to="/transactions" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                 activeItem === "transactions"
-                  ? "bg-red-600 hover:text-white"
+                  ? "bg-primary-red hover:text-white"
                   : ""
               }`}
               onClick={() => handleItemClick("transactions")}
@@ -270,11 +272,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Transactions
             </li>
           </Link>
-          <Link to="/suggestions" className="m-0 p-0">
+          <Link to="/suggestions" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                 activeItem === "suggestions"
-                  ? "bg-red-600 hover:text-white"
+                  ? "bg-primary-red hover:text-white"
                   : ""
               }`}
               onClick={() => handleItemClick("suggestions")}
@@ -283,10 +285,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Suggestions
             </li>
           </Link>
-          {/* <Link to="/Reports" className="m-0 p-0">
+          {/* <Link to="/Reports" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "reports" ? "bg-red-600 hover:text-white" : ""
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "reports" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("reports")}
             >
@@ -294,15 +296,29 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
               Reports
             </li>
           </Link> */}
-          <Link to="/pages" className="m-0 p-0">
+          <Link to="/pages" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "pages" ? "bg-red-600 hover:text-white" : ""
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "pages" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("pages")}
             >
               <RiPagesFill className="inline-block w-5 h-5 mr-2 -mt-1"></RiPagesFill>
               Pages
+            </li>
+          </Link>
+          
+          
+          
+          <Link to="/notifications" className="mb-1 p-0">
+            <li
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "notifications" ? "bg-primary-red hover:text-white" : ""
+              }`}
+              onClick={() => handleItemClick("notifications")}
+            >
+              <IoIosSend className="inline-block w-5 h-5 mr-2 -mt-1"></IoIosSend>
+              Notifications Send
             </li>
           </Link>
 
@@ -311,8 +327,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
 
 
           <li
-            className={` rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-              activeItem === "settings" ? "bg-red-600 hover:text-white" : ""
+            className={`mb-1 rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+              activeItem === "settings" ? "bg-primary-red hover:text-white" : ""
             }`}
             onClick={() => {
               handleItemClick("settings");
@@ -335,10 +351,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
           </li>
           {showDropdown3 && (
             <ul className="pl-4 mt-2 mb-2 ">
-              {/* <Link to="/general" className="m-0 p-0">
+              {/* <Link to="/general" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                    activeItem === "general" ? "bg-red-600 hover:text-white" : ""
+                    activeItem === "general" ? "bg-primary-red hover:text-white" : ""
                   }`}
                   onClick={() => handleItemClick("general")}
                 >
@@ -346,11 +362,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
                   General
                 </li>
               </Link>
-              <Link to="/smtpemail" className="m-0 p-0">
+              <Link to="/smtpemail" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                     activeItem === "smtpemail"
-                      ? "bg-red-600 hover:text-white"
+                      ? "bg-primary-red hover:text-white"
                       : ""
                   }`}
                   onClick={() => handleItemClick("smtpemail")}
@@ -359,11 +375,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
                   SMTP Email
                 </li>
               </Link> */}
-              <Link to="/onesignalnotification" className="m-0 p-0">
+              <Link to="/onesignalnotification" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                     activeItem === "onesignalnotification"
-                      ? "bg-red-600 hover:text-white"
+                      ? "bg-primary-red hover:text-white"
                       : ""
                   }`}
                   onClick={() => handleItemClick("onesignalnotification")}
@@ -372,11 +388,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
                   OneSignal Notification
                 </li>
               </Link>
-              <Link to="/appupdatepopup" className="m-0 p-0">
+              <Link to="/appupdatepopup" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                     activeItem === "appupdatepopup"
-                      ? "bg-red-600 hover:text-white"
+                      ? "bg-primary-red hover:text-white"
                       : ""
                   }`}
                   onClick={() => handleItemClick("appupdatepopup")}
@@ -385,11 +401,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
                   App Update Popup
                 </li>
               </Link>
-              <Link to="/othersettings" className="m-0 p-0">
+              <Link to="/othersettings" className="mb-1 p-0">
                 <li
                   className={`rounded hover:shadow hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
                     activeItem === "othersettings"
-                      ? "bg-red-600 hover:text-white"
+                      ? "bg-primary-red hover:text-white"
                       : ""
                   }`}
                   onClick={() => handleItemClick("othersettings")}
@@ -404,10 +420,10 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
 
 
 
-{/* <Link to="/appverify" className="m-0 p-0">
+{/* <Link to="/appverify" className="mb-1 p-0">
             <li
-              className={`rounded hover:shadow bg-gray-800 hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
-                activeItem === "appverify" ? "bg-red-600 hover:text-white" : ""
+              className={`rounded hover:shadow bg-primary-gray hover:text-red-700 p-2 transition-all duration-500 ease-in-out cursor-pointer ${
+                activeItem === "appverify" ? "bg-primary-red hover:text-white" : ""
               }`}
               onClick={() => handleItemClick("appverify")}
             >

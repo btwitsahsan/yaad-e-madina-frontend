@@ -1,3 +1,55 @@
 .ql-container {
     height: 130px !important; /* Adjust the height as needed */
   }
+
+
+  
+.custom-quill-editor .ql-container {
+  height: 300px !important; /* Adjust the height as needed */
+}
+
+.custom-control {
+  background-color: #374151; /* Tailwind class bg-gray-700 */
+  border-color: #4A5568; /* Tailwind class bg-gray-700 */
+  height: 44px;
+  color: white;
+}
+
+.custom-control:hover {
+  border-color: #2D3748; /* Tailwind class hover:bg-gray-800 */
+}
+
+.custom-menu {
+  background-color: #4A5568; /* Tailwind class bg-gray-700 */
+}
+
+.custom-option {
+  background-color: #4A5568; /* Tailwind class bg-gray-700 */
+  color: white;
+}
+
+.custom-option:hover {
+  background-color: #B91C1C; /* Tailwind class hover:bg-red-600 */
+}
+
+.custom-multiValue {
+  background-color: #B91C1C; /* Tailwind class bg-red-600 */
+}
+
+.custom-multiValueLabel {
+  color: white;
+}
+
+.custom-multiValueRemove {
+  color: white;
+}
+
+.custom-multiValueRemove:hover {
+  background-color: #b70b0b; /* Tailwind class hover:bg-red-900 */
+  color: white;
+}
+
+
+  .shadow-bottom {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }

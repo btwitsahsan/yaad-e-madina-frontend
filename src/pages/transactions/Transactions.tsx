@@ -17,7 +17,7 @@ const Transactions: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex flex-col md:flex-row gap-2 justify-between md:items-center">
         <div className="flex items-center gap-4">
       <select

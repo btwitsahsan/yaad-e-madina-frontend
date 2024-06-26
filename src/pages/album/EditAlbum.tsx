@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import axios from "axios";
-import { CreateAlbum, getNaatKhawans } from "../../network/api";
+import { getAlbumById, getNaatKhawans, updateAlbum } from "../../network/api";
 import { customStyles2 } from "../../components/MultiSelectStyle";
 import Modal from "../../components/Modal";
 
-const AddAlbum: React.FC = () => {
+const EditAlbum: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [albumName, setAlbumName] = useState("");
-  const [albumImage, setAlbumImage] = useState<File | null>(null);
+  const [albumImage, setAlbumImage] = useState<File | null>(null); // Change type to string | null
   const [status, setStatus] = useState("active");
   const [naatKhawans, setNaatKhawans] = useState([]);
   const [selectedNaatKhawan, setSelectedNaatKhawan] = useState<any>(null);
@@ -19,13 +20,37 @@ const AddAlbum: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchAlbumData = async () => {
+      try {
+        const albumData = await getAlbumById(id);
+        setAlbumName(albumData.name);
+        setStatus(albumData.status);
+        // Set the album image URL from the database
+        setAlbumImage(albumData.image); // Assuming albumData.image is the URL from database
+        // Pre-select the Naat Khawan
+        const selectedNK = {
+          value: albumData.naatKhawan.value,
+          label: albumData.naatKhawan.name,
+        };
+        setSelectedNaatKhawan(selectedNK);
+      } catch (error) {
+        console.error("Error fetching album data:", error);
+      }
+    };
+    fetchAlbumData();
+  }, [id]);
+
+  useEffect(() => {
     const fetchNaatKhawans = async () => {
       try {
+        // Fetch Naat Khawans from your API
         const fetchedNaatKhawans = await getNaatKhawans();
+        // Map the fetched Naat Khawans to the format expected by react-select
         const mappedNaatKhawans = fetchedNaatKhawans.map((naatKhawan: any) => ({
           value: naatKhawan.id,
           label: naatKhawan.name,
         }));
+        // Set the mapped Naat Khawans to the state
         setNaatKhawans(mappedNaatKhawans);
       } catch (error) {
         console.error("Error fetching Naat Khawans:", error);
@@ -40,7 +65,7 @@ const AddAlbum: React.FC = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setAlbumImage(e.target.files[0]);
+      setAlbumImage(e.target.files[0]); // Update albumImage with local file URL
     }
   };
 
@@ -51,24 +76,34 @@ const AddAlbum: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!albumImage || !selectedNaatKhawan) {
-      alert("Please select an image and a Naat Khawan");
+    if (!selectedNaatKhawan) {
+      alert("Please select a Naat Khawan");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", albumImage);
-    formData.append("upload_preset", "ubfgufcm");
+    let imageUrl = albumImage; // Default to current albumImage URL
+
+    if (albumImage) {
+      const formData = new FormData();
+      formData.append("file", albumImage);
+      formData.append("upload_preset", "ubfgufcm");
+
+      try {
+        setLoading(true);
+        const res = await axios.post(
+          "https://api.cloudinary.com/v1_1/dvew55mcu/image/upload",
+          formData
+        );
+        imageUrl = res.data.secure_url;
+      } catch (err) {
+        console.error("Error uploading image:", err);
+        alert("Error uploading image");
+        setLoading(false);
+        return;
+      }
+    }
 
     try {
-      setLoading(true);
-
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dvew55mcu/image/upload",
-        formData
-      );
-      const imageUrl = res.data.secure_url;
-
       const albumData = {
         name: albumName,
         naatKhawan: { value: selectedNaatKhawan.value, label: selectedNaatKhawan.label },
@@ -76,16 +111,12 @@ const AddAlbum: React.FC = () => {
         status: status,
       };
 
-      const resp = await CreateAlbum(albumData);
-
-      if (resp && resp.success) {
-        setModalContent({ title: 'Create Successful', message: 'Your Album Has Been Created Successfully', success: true });
-      } else {
-        setModalContent({ title: 'Failed', message: 'Your Album Has Not Been Created', success: false });
-      }
+      await updateAlbum(id, albumData);
+      setModalContent({ title: 'Update Successful', message: 'Your Album Has Been Updated Successfully', success: true });
     } catch (err) {
-      console.error("Error while adding album:", err);
-      alert("Error while adding album");
+      console.error("Error while updating album:", err);
+      alert("Error while updating album");
+      setModalContent({ title: 'Failed', message: 'Your Album Has Not Been Updated', success: false });
     } finally {
       setLoading(false);
       setModalVisible(true);
@@ -180,14 +211,14 @@ const AddAlbum: React.FC = () => {
           </div>
         </div>
 
-        {albumImage && (
+        {albumImage && typeof albumImage === 'string' && ( // Check if albumImage is a string (URL)
           <div className="flex flex-col gap-1 md:flex-row md:items-center">
             <label className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"></label>
             <div className="w-full md:w-2/3 flex items-center">
               <div className="flex items-center mt-2">
                 <img
-                  src={URL.createObjectURL(albumImage)}
-                  alt="Category Preview"
+                  src={albumImage}
+                  alt="Album Preview"
                   className="w-20 h-20 object-cover rounded-lg"
                 />
               </div>
@@ -219,7 +250,7 @@ const AddAlbum: React.FC = () => {
             className="hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
             disabled={loading}
           >
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? 'Updating...' : 'Update'}
           </button>
         </div>
       </form>
@@ -236,4 +267,4 @@ const AddAlbum: React.FC = () => {
   );
 };
 
-export default AddAlbum;
+export default EditAlbum;

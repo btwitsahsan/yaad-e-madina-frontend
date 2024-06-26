@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Select from 'react-select';
 import axios from 'axios';
 import { customStyles } from "../../components/MultiSelectStyle";
-import { createPlaylist, getAudios } from "../../network/api"; // Import your API functions for fetching audio and submitting playlist
+import { getAudios, updatePlaylist, getPlaylistById } from "../../network/api";
 import Modal from "../../components/Modal";
 
-const AddPlaylist: React.FC = () => {
+const EditPlaylist: React.FC = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
     const [fileName, setFileName] = useState('No file chosen');
     const [selectedAudio, setSelectedAudio] = useState([]);
@@ -17,25 +18,35 @@ const AddPlaylist: React.FC = () => {
     const [playlistStatus, setPlaylistStatus] = useState('active');
     const [modalVisible, setModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', message: '', success: true });
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetchAudio(); // Fetch audio when component mounts
+        fetchAudio();
+        fetchPlaylistDetails(); // Fetch playlist details when component mounts
     }, []);
 
     const fetchAudio = async () => {
         try {
-          const AudioData = await getAudios();
-          console.log(AudioData);
-          setAudioData(AudioData.map((audio: any) => ({ value: audio.id, label: audio.title })));
+            const AudioData = await getAudios();
+            setAudioData(AudioData.map((audio: any) => ({ value: audio.id, label: audio.title })));
         } catch (error) {
             console.error("Error fetching audio:", error);
-            // Handle error
+        }
+    };
+
+    const fetchPlaylistDetails = async () => {
+        try {
+            const playlist = await getPlaylistById(id); // Assuming getPlaylists can fetch a single playlist by ID
+            setPlaylistTitle(playlist.title);
+            setSelectedAudio(playlist.audios.map((audio: any) => ({ value: audio.id, label: audio.title })));
+            setPlaylistStatus(playlist.status);
+            setFileName(playlist.image);
+        } catch (error) {
+            console.error("Error fetching playlist details:", error);
         }
     };
 
     const handleBackClick = () => {
-        navigate(-1); // Navigate back to the previous route
+        navigate(-1);
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,19 +66,21 @@ const AddPlaylist: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!playlistTitle || !playlistImage || selectedAudio.length === 0) {
+        if (!playlistTitle || selectedAudio.length === 0) {
             alert("Please fill in all the fields");
             return;
         }
 
         try {
-            setLoading(true);
-            const formData = new FormData();
-            formData.append("file", playlistImage);
-            formData.append("upload_preset", "ubfgufcm"); // Replace with your Cloudinary upload preset
+            let imageUrl = fileName;
+            if (playlistImage) {
+                const formData = new FormData();
+                formData.append("file", playlistImage);
+                formData.append("upload_preset", "ubfgufcm");
 
-            const imageRes = await axios.post("https://api.cloudinary.com/v1_1/dvew55mcu/image/upload", formData);
-            const imageUrl = imageRes.data.secure_url;
+                const imageRes = await axios.post("https://api.cloudinary.com/v1_1/dvew55mcu/image/upload", formData);
+                imageUrl = imageRes.data.secure_url;
+            }
 
             const playlistData = {
                 title: playlistTitle,
@@ -76,18 +89,17 @@ const AddPlaylist: React.FC = () => {
                 status: playlistStatus
             };
 
-            const resp = await createPlaylist(playlistData); // Submit the playlist data
+            const resp = await updatePlaylist(id, playlistData);
             if (resp && resp.success) {
-                setModalContent({ title: 'Create Successful', message: 'Your Playlist Has Been Created Successfully', success: true });
+                setModalContent({ title: 'Update Successful', message: 'Your Playlist Has Been Updated Successfully', success: true });
             } else {
-                setModalContent({ title: 'Failed', message: 'Your Playlist Has Not Been Created', success: false });
+                setModalContent({ title: 'Failed', message: 'Your Playlist Has Not Been Updated', success: false });
             }
         } catch (err) {
-            console.error("Error while adding playlist:", err);
-            alert("Error while adding playlist");
+            console.error("Error while updating playlist:", err);
+            alert("Error while updating playlist");
         } finally {
             setModalVisible(true);
-            setLoading(false);
         }
     };
 
@@ -135,6 +147,7 @@ const AddPlaylist: React.FC = () => {
                             id="playlist-audio"
                             options={audioData}
                             isMulti
+                            value={selectedAudio}
                             onChange={handleAudioChange}
                             styles={customStyles}
                             classNamePrefix="react-select"
@@ -184,24 +197,22 @@ const AddPlaylist: React.FC = () => {
                     <label className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"></label>
                     <button
                         type="submit"
-            className=" hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
-            disabled={loading} 
-            >
-              {loading ? "Saving..." : "Save"}
-          </button>
+                        className="hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Save
+                    </button>
+                </div>
+            </form>
+            {modalVisible && (
+                <Modal
+                    title={modalContent.title}
+                    message={modalContent.message}
+                    onClose={closeModal}
+                    onConfirm={confirmModal}
+                />
+            )}
         </div>
-
-      </form>
-      {modalVisible && (
-        <Modal
-          title={modalContent.title}
-          message={modalContent.message}
-          onClose={closeModal}
-          onConfirm={confirmModal}
-        />
-      )}
-    </div>
-  );
+    );
 };
 
-export default AddPlaylist;
+export default EditPlaylist;

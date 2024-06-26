@@ -4,7 +4,7 @@ const OneSignalNotification: React.FC = () => {
  
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
      
 
 <form className="space-y-4 mt-5">

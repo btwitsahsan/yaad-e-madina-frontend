@@ -25,7 +25,7 @@ const AddAdmin: React.FC = () => {
 
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex justify-start items-center">
         
         <button className="flex items-center gap-2 text-red-600 text-xl rounded p-2 font-bold"
@@ -42,53 +42,53 @@ const AddAdmin: React.FC = () => {
 <form className="space-y-4 mt-5">
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
            Name
           </label>
           <input
             type="text"
             id="category-name"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
        
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
            Email
           </label>
           <input
             type="email"
             id="category-name"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
        
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
            Password
           </label>
           <input
             type="password"
             id="category-name"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
         
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-name" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
            Phone
           </label>
           <input
             type="number"
             id="category-name"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
 
 
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-image" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-image" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
           Image
           </label>
           <div className="w-full md:w-2/3 flex items-center">
@@ -100,10 +100,10 @@ const AddAdmin: React.FC = () => {
             />
             <label
               htmlFor="category-image"
-              className="w-full flex justify-between items-center pl-2 h-11 bg-gray-700 rounded cursor-pointer"
+              className="w-full flex justify-between items-center pl-2 min-h-10 bg-gray-700 rounded cursor-pointer"
             >
               <span className="text-gray-400">No file chosen</span>
-              <span className="flex items-center bg-gray-600 h-11 hover:bg-gray-700 text-white px-4 rounded">
+              <span className="flex items-center bg-gray-600 min-h-10 hover:bg-gray-700 text-white px-4 rounded">
                 Select
               </span>
             </label>
@@ -113,12 +113,12 @@ const AddAdmin: React.FC = () => {
 
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-status" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-status" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
             Admin Type
           </label>
           <select
             id="category-status"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           >
             <option value="subadmin">Sub Admin</option>
             <option value="masteradmin">Masted Admin</option>
@@ -129,12 +129,12 @@ const AddAdmin: React.FC = () => {
         
         
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label htmlFor="category-status" className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label htmlFor="category-status" className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
             Select Status
           </label>
           <select
             id="category-status"
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -144,12 +144,12 @@ const AddAdmin: React.FC = () => {
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
 
-          <label className="w-full md:w-1/3 pr-4 text-lg text-white font-semibold">
+          <label className="w-full md:w-1/3 pr-4 text-md text-white font-semibold">
             
           </label>
           <button
             type="submit"
-            className=" hover:bg-red-700 bg-red-600 text-white font-bold py-2 px-4 rounded"
+            className=" hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
           >
             Save
           </button>

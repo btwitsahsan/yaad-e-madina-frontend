@@ -36,7 +36,7 @@ const SignUp: React.FC = () => {
   // };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-gray-800">
+    <div className="w-full h-screen flex justify-center items-center bg-primary-gray">
       {/* <div className="w-full max-w-md bg-slate-700 rounded-lg p-8">
         <h2 className="text-white text-2xl font-semibold mb-4 text-center">SIGN UP</h2>
         {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>}

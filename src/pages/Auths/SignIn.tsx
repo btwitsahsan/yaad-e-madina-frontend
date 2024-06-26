@@ -38,7 +38,7 @@ const SignIn: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-gray-800">
+    <div className="w-full h-screen flex justify-center items-center bg-primary-gray">
       <div className="w-full max-w-md bg-slate-700 rounded-lg p-8">
         <h2 className="text-white text-2xl font-semibold mb-4 text-center">SIGN IN</h2>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -47,7 +47,7 @@ const SignIn: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="p-2 rounded bg-gray-600 text-white"
+            className="p-2 rounded bg-primary-gray text-white"
             required
           />
           <input
@@ -55,10 +55,10 @@ const SignIn: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="p-2 rounded bg-gray-600 text-white"
+            className="p-2 rounded bg-primary-gray text-white"
             required
           />
-          <button type="submit" className="bg-red-600 text-white rounded p-2 font-semibold">
+          <button type="submit" className="bg-red-600 hover:bg-secondary-gray text-white rounded p-2 font-semibold">
             Sign In
           </button>
         </form>

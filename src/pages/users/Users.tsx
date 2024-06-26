@@ -18,7 +18,7 @@ const Users: React.FC = () => {
   }
 
   return (
-    <div className="w-full bg-gray-800 rounded p-4">
+    <div className="w-full bg-primary-gray rounded p-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
    

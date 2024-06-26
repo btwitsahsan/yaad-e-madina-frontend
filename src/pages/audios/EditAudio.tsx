@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import axios from "axios";
-import { CreateAudio, getNaatKhawans, getCategories, getAlbums } from "../../network/api";
+import { getAudioById, updateAudio, getNaatKhawans, getCategories, getAlbums } from "../../network/api";
 import { customStyles2 } from "../../components/MultiSelectStyle";
 import Modal from "../../components/Modal";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-const AddAudio: React.FC = () => {
+const EditAudio: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("active");
@@ -17,21 +18,36 @@ const AddAudio: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [lyrics, setLyrics] = useState("");
   const [audioDetails, setAudioDetails] = useState("");
-
   const [naatKhawans, setNaatKhawans] = useState([]);
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [albumOptions, setAlbumOptions] = useState([]);
   const [selectedNaatKhawan, setSelectedNaatKhawan] = useState<any>(null);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedAlbum, setSelectedAlbum] = useState<any>(null);
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '', success: true });
-  const [loading, setLoading] = useState(false); // Loader state
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<{ title: string; message: string; success: boolean }>({
+    title: "",
+    message: "",
+    success: false
+  });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [previousImage, setPreviousImage] = useState<string>("");
+  const [previousAudio, setPreviousAudio] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const audioData = await getAudioById(id);
+        setTitle(audioData.title);
+        setStatus(audioData.status);
+        setLyrics(audioData.lyrics);
+        setAudioDetails(audioData.audioDetails);
+        setSelectedNaatKhawan({ value: audioData.naatKhawan.id, label: audioData.naatKhawan.name });
+        setSelectedCategory({ value: audioData.category.id, label: audioData.category.name });
+        setSelectedAlbum({ value: audioData.album.id, label: audioData.album.name });
+        setPreviousImage(audioData.imageFile);
+        setPreviousAudio(audioData.audioFile);
+
         const naatkhawanData = await getNaatKhawans();
         setNaatKhawans(naatkhawanData.map((naatKhawan: any) => ({ value: naatKhawan.id, label: naatKhawan.name })));
         
@@ -39,13 +55,13 @@ const AddAudio: React.FC = () => {
         setCategoryOptions(categoryData.map((category: any) => ({ value: category.id, label: category.name })));
 
         const albumData = await getAlbums();
-        setAlbumOptions(albumData.map((album: any) => ({ value: album.id, label: album.name, naatKhawan: album.naatKhawan })));
+        setAlbumOptions(albumData.map((album: any) => ({ value: album.id, label: album.name })));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
-  }, []);
+  }, [id]);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -54,18 +70,19 @@ const AddAudio: React.FC = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
-    }
-  };
-
-  const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setAudioFile(e.target.files[0]);
+      setPreviousImage(URL.createObjectURL(e.target.files[0]));
+      }
+      };
+      
+      const handleAudioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+          setAudioFile(e.target.files[0]);
+          setPreviousAudio(URL.createObjectURL(e.target.files[0]));
     }
   };
 
   const handleNaatKhawanChange = (selectedOption: any) => {
     setSelectedNaatKhawan(selectedOption);
-    setSelectedAlbum(null); // Reset selected album when changing Naat Khawan
   };
 
   const handleCategoryChange = (selectedOption: any) => {
@@ -78,55 +95,63 @@ const AddAudio: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!audioFile || !imageFile || !selectedNaatKhawan || !selectedAlbum) {
-      alert("Please select all required fields");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", audioFile);
-    formData.append("upload_preset", "ubfgufcm");
-
-    try {
-      setLoading(true); // Show loader
-
+    setLoading(true);
+    let imageUrl = previousImage; // Initialize with previous image URL
+    let audioUrl = previousAudio; // Initialize with previous audio URL
+  
+    const audioData = {
+      title,
+      category: { value: selectedCategory.value, label: selectedCategory.label },
+      album: { value: selectedAlbum.value, label: selectedAlbum.label },
+      status,
+      naatKhawan: { value: selectedNaatKhawan.value, label: selectedNaatKhawan.label },
+      audioFile: audioUrl,
+      imageFile: imageUrl,
+      lyrics,
+      audioDetails,
+    };
+  
+    if (audioFile) {
+      const formData = new FormData();
+      formData.append("file", audioFile);
+      formData.append("upload_preset", "ubfgufcm");
       const audioRes = await axios.post("https://api.cloudinary.com/v1_1/dvew55mcu/video/upload", formData);
-      const audioUrl = audioRes.data.secure_url;
-
-      formData.set("file", imageFile);
+      audioUrl = audioRes.data.secure_url;
+      audioData.audioFile = audioUrl;
+    }
+  
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("upload_preset", "ubfgufcm");
       const imageRes = await axios.post("https://api.cloudinary.com/v1_1/dvew55mcu/image/upload", formData);
-      const imageUrl = imageRes.data.secure_url;
-
-      const audioData = {
-        title,
-        category: { value: selectedCategory.value, label: selectedCategory.label },
-        album: { value: selectedAlbum.value, label: selectedAlbum.label },
-        status,
-        naatKhawan: { value: selectedNaatKhawan.value, label: selectedNaatKhawan.label },
-        audioFile: audioUrl,
-        imageFile: imageUrl,
-        lyrics,
-        audioDetails,
-      };
-
-      const resp = await CreateAudio(audioData);
-
+      imageUrl = imageRes.data.secure_url;
+      audioData.imageFile = imageUrl;
+    }
+  
+    try {
+      const resp = await updateAudio(id, audioData);
+  
       if (resp && resp.success) {
-        setModalContent({ title: 'Create Successful', message: 'Your Audio Has Been Created Successfully', success: true });
+        setModalContent({ title: 'Update Successful', message: 'Your Audio Has Been Updated Successfully', success: true });
       } else {
-        setModalContent({ title: 'Failed', message: 'Your Audio Has Not Been Created', success: false });
+        setModalContent({ title: 'Failed', message: 'Your Audio Has Not Been Updated', success: false });
       }
     } catch (err) {
-      console.error("Error while adding audio:", err);
-      alert("Error while adding audio");
+      console.error("Error while updating audio:", err);
+      setModalContent({ title: 'Error', message: 'An error occurred while updating the audio.', success: false });
     } finally {
-      setLoading(false); // Hide loader
       setModalVisible(true);
+      setLoading(false);
     }
   };
+  
 
   const closeModal = () => {
     setModalVisible(false);
+    if (modalContent.success) {
+      navigate('/audios');
+    }
   };
 
   const confirmModal = () => {
@@ -135,9 +160,6 @@ const AddAudio: React.FC = () => {
       navigate('/audios');
     }
   };
-
-  // Filter albums based on selectedNaatKhawan
-  const filteredAlbumOptions = selectedNaatKhawan ? albumOptions.filter((album: any) => album.naatKhawan.id === selectedNaatKhawan.value) : [];
 
   return (
     <div className="w-full bg-gray-800 rounded p-4">
@@ -163,7 +185,7 @@ const AddAudio: React.FC = () => {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           />
         </div>
 
@@ -183,6 +205,7 @@ const AddAudio: React.FC = () => {
               styles={customStyles2}
               className="basic-multi-select"
               classNamePrefix="select"
+              value={selectedCategory}
             />
           </div>
         </div>
@@ -203,6 +226,7 @@ const AddAudio: React.FC = () => {
               styles={customStyles2}
               className="basic-multi-select"
               classNamePrefix="select"
+              value={selectedNaatKhawan}
             />
           </div>
         </div>
@@ -217,7 +241,7 @@ const AddAudio: React.FC = () => {
           <div className="w-full md:w-2/3">
             <Select
               id="album"
-              options={filteredAlbumOptions}
+              options={albumOptions}
               isMulti={false}
               onChange={handleAlbumChange}
               styles={customStyles2}
@@ -244,12 +268,12 @@ const AddAudio: React.FC = () => {
             />
             <label
               htmlFor="audio-file"
-              className="w-full flex justify-between items-center pl-2 min-h-11 bg-gray-700 rounded cursor-pointer"
+              className="w-full flex justify-between items-center pl-2 min-h-10 bg-gray-700 rounded cursor-pointer"
             >
               <span className="text-gray-400 overflow-hidden break-words">
-                {audioFile ? audioFile.name : "No file chosen"}
+              {audioFile ? audioFile.name : previousAudio ? previousAudio : "Loading..."}
               </span>
-              <span className="flex items-center bg-gray-600 min-h-11 hover:bg-gray-700 text-white px-4 rounded">
+              <span className="flex items-center bg-gray-600 min-h-10 hover:bg-gray-700 text-white px-4 rounded">
                 Select
               </span>
             </label>
@@ -272,25 +296,25 @@ const AddAudio: React.FC = () => {
             />
             <label
               htmlFor="image-file"
-              className="w-full flex justify-between items-center pl-2 min-h-11 bg-gray-700 rounded cursor-pointer"
+              className="w-full flex justify-between items-center pl-2 min-h-10 bg-gray-700 rounded cursor-pointer"
             >
               <span className="text-gray-400 overflow-hidden break-words">
-                {imageFile ? imageFile.name : "No file chosen"}
+              {imageFile ? imageFile.name : previousImage ? previousImage : "Loading..."}
               </span>
-              <span className="flex items-center bg-gray-600 min-h-11 hover:bg-gray-700 text-white px-4 rounded">
+              <span className="flex items-center bg-gray-600 min-h-10 hover:bg-gray-700 text-white px-4 rounded">
                 Select
               </span>
             </label>
           </div>
         </div>
 
-        {imageFile && (
+        {previousImage && (
           <div className="flex flex-col gap-1 md:flex-row md:items-center">
             <label className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"></label>
             <div className="w-full md:w-2/3 flex items-center">
               <div className="flex items-center mt-2">
                 <img
-                  src={URL.createObjectURL(imageFile)}
+                  src={previousImage}
                   alt="Image Preview"
                   className="w-20 h-20 object-cover rounded-lg"
                 />
@@ -385,7 +409,7 @@ const AddAudio: React.FC = () => {
             id="status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-11"
+            className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -398,7 +422,7 @@ const AddAudio: React.FC = () => {
             className="hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
             disabled={loading} 
           >
-            {loading ? "Saving..." : "Save"} 
+            {loading ? "Updating..." : "Update"}
           </button>
         </div>
       </form>
@@ -415,4 +439,6 @@ const AddAudio: React.FC = () => {
   );
 };
 
-export default AddAudio;
+
+
+export default EditAudio;

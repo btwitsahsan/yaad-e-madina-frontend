@@ -1,106 +1,112 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import Select from "react-select";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { CreateAlbum, getNaatKhawans } from "../../network/api";
-import { customStyles2 } from "../../components/MultiSelectStyle";
+import { getAlbumById, updateAlbum } from "../../network/api";
 import Modal from "../../components/Modal";
 
-const AddAlbum: React.FC = () => {
+const EditAlbum: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [albumName, setAlbumName] = useState("");
   const [albumImage, setAlbumImage] = useState<File | null>(null);
+  const [albumImageUrl, setAlbumImageUrl] = useState<string | null>(null);
   const [status, setStatus] = useState("active");
-  const [naatKhawans, setNaatKhawans] = useState([]);
-  const [selectedNaatKhawan, setSelectedNaatKhawan] = useState<any>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '', success: true });
-  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<{ title: string; message: string }>({
+    title: "",
+    message: ""
+  });
+  const [isLoading, setIsLoading] = useState(false); // Loading state
 
   useEffect(() => {
-    const fetchNaatKhawans = async () => {
+    const fetchAlbum = async () => {
       try {
-        const fetchedNaatKhawans = await getNaatKhawans();
-        const mappedNaatKhawans = fetchedNaatKhawans.map((naatKhawan: any) => ({
-          value: naatKhawan.id,
-          label: naatKhawan.name,
-        }));
-        setNaatKhawans(mappedNaatKhawans);
+        const data = await getAlbumById(id!);
+        setAlbumName(data.name);
+        setAlbumImageUrl(data.image);
+        setStatus(data.status);
       } catch (error) {
-        console.error("Error fetching Naat Khawans:", error);
+        console.error("Failed to fetch album", error);
+        setModalContent({ title: 'Error', message: 'Failed to fetch album' });
+        setModalVisible(true);
       }
     };
-    fetchNaatKhawans();
-  }, []);
+    fetchAlbum();
+  }, [id]);
 
   const handleBackClick = () => {
-    navigate(-1);
+    navigate(-1); // Navigate back to the previous route
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setAlbumImage(e.target.files[0]);
+      setAlbumImageUrl(URL.createObjectURL(e.target.files[0]));
     }
-  };
-
-  const handleNaatKhawanChange = (selectedOption: any) => {
-    setSelectedNaatKhawan(selectedOption);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let imageUrl = albumImageUrl;
 
-    if (!albumImage || !selectedNaatKhawan) {
-      alert("Please select an image and a Naat Khawan");
-      return;
+    if (albumImage) {
+      const formData = new FormData();
+      formData.append("file", albumImage);
+      formData.append("upload_preset", "ubfgufcm"); // Replace with your Cloudinary upload preset
+
+      setIsLoading(true); // Set loading state to true
+
+      try {
+        // Upload image to Cloudinary
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dvew55mcu/image/upload", // Replace with your Cloudinary cloud name
+          formData
+        );
+        imageUrl = response.data.secure_url;
+      } catch (error) {
+        console.error(error);
+        setModalContent({ title: 'Error', message: 'Error while uploading image' });
+        setModalVisible(true);
+        setIsLoading(false); // Reset loading state
+        return;
+      }
     }
 
-    const formData = new FormData();
-    formData.append("file", albumImage);
-    formData.append("upload_preset", "ubfgufcm");
+    // Send form data to backend
+    const albumData = {
+      name: albumName,
+      image: imageUrl,
+      status: status,
+    };
 
     try {
-      setLoading(true);
-
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dvew55mcu/image/upload",
-        formData
-      );
-      const imageUrl = res.data.secure_url;
-
-      const albumData = {
-        name: albumName,
-        naatKhawan: { value: selectedNaatKhawan.value, label: selectedNaatKhawan.label },
-        image: imageUrl,
-        status: status,
-      };
-
-      const resp = await CreateAlbum(albumData);
-
-      if (resp && resp.success) {
-        setModalContent({ title: 'Create Successful', message: 'Your Album Has Been Created Successfully', success: true });
+      const response = await updateAlbum(id!, albumData);
+      if (response.success) {
+        setModalContent({
+          title: "Update Successful",
+          message: "Your Album Has Been Updated Successfully",
+        });
+        setModalVisible(true);
       } else {
-        setModalContent({ title: 'Failed', message: 'Your Album Has Not Been Created', success: false });
+        setModalContent({
+          title: "Failed",
+          message: "Your Album Has Not Been Updated",
+        });
+        setModalVisible(true);
       }
-    } catch (err) {
-      console.error("Error while adding album:", err);
-      alert("Error while adding album");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setModalContent({ title: 'Error', message: 'Error while updating album' });
       setModalVisible(true);
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
   const closeModal = () => {
     setModalVisible(false);
-  };
-
-  const confirmModal = () => {
-    setModalVisible(false);
-    if (modalContent.success) {
-      navigate('/album');
-    }
+    navigate("/albums");
   };
 
   return (
@@ -133,27 +139,6 @@ const AddAlbum: React.FC = () => {
 
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label
-            htmlFor="category-NaatKhawan"
-            className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
-          >
-            Select Naat Khawan
-          </label>
-          <div className="w-full md:w-2/3">
-            <Select
-              id="category-NaatKhawan"
-              options={naatKhawans}
-              isMulti={false}
-              onChange={handleNaatKhawanChange}
-              value={selectedNaatKhawan}
-              styles={customStyles2}
-              className="basic-multi-select"
-              classNamePrefix="select"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1 md:flex-row md:items-center">
-          <label
             htmlFor="album-image"
             className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
           >
@@ -171,7 +156,7 @@ const AddAlbum: React.FC = () => {
               className="w-full flex justify-between items-center pl-2 min-h-10 bg-gray-700 rounded cursor-pointer"
             >
               <span className="text-gray-400 overflow-hidden break-words">
-                {albumImage ? albumImage.name : "No file chosen"}
+                {albumImage ? albumImage.name : albumImageUrl ? "No file chosen" : "Loading..."}
               </span>
               <span className="flex items-center bg-gray-600 min-h-10 hover:bg-gray-700 text-white px-4 rounded">
                 Select
@@ -179,31 +164,29 @@ const AddAlbum: React.FC = () => {
             </label>
           </div>
         </div>
-
-        {albumImage && (
+        {albumImageUrl && (
           <div className="flex flex-col gap-1 md:flex-row md:items-center">
             <label className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"></label>
             <div className="w-full md:w-2/3 flex items-center">
               <div className="flex items-center mt-2">
                 <img
-                  src={URL.createObjectURL(albumImage)}
-                  alt="Category Preview"
+                  src={albumImageUrl}
+                  alt="Album Preview"
                   className="w-20 h-20 object-cover rounded-lg"
                 />
               </div>
             </div>
           </div>
         )}
-
         <div className="flex flex-col gap-1 md:flex-row md:items-center">
           <label
-            htmlFor="category-status"
+            htmlFor="album-status"
             className="w-full md:w-1/3 pr-4 text-md text-white font-semibold"
           >
-            Select Status
+            Status
           </label>
           <select
-            id="category-status"
+            id="album-status"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             className="w-full md:w-2/3 p-2 rounded bg-gray-700 text-white min-h-10"
@@ -217,9 +200,9 @@ const AddAlbum: React.FC = () => {
           <button
             type="submit"
             className="hover:bg-secondary-gray bg-red-600 text-white font-bold py-2 px-4 rounded"
-            disabled={loading}
+            disabled={isLoading}
           >
-            {loading ? 'Saving...' : 'Save'}
+            {isLoading ? 'Updating...' : 'Update'}
           </button>
         </div>
       </form>
@@ -229,11 +212,11 @@ const AddAlbum: React.FC = () => {
           title={modalContent.title}
           message={modalContent.message}
           onClose={closeModal}
-          onConfirm={confirmModal}
+          onConfirm={closeModal}
         />
       )}
     </div>
   );
 };
 
-export default AddAlbum;
+export default EditAlbum;
