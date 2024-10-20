@@ -1,7 +1,7 @@
 import axios from "axios";
 import { decryptCookie, encryptCookie } from "../utils/cookie";
 
-const DOMAIN = "http://127.0.0.1:5000/api";
+const DOMAIN = "http://127.0.0.1:4000/api";
 // const DOMAIN = "https://yaad-e-madina-admin-backend.vercel.app/api";
 
 
