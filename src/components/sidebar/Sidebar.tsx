@@ -11,7 +11,7 @@ import { BsFillSignIntersectionSideFill } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
 import { IoSettings } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
-import { Scrollbars } from 'react-custom-scrollbars';
+import { Scrollbar } from 'react-scrollbars-custom';
 import { FaDollarSign, FaEdit, FaHome, FaListUl, FaSlidersH, FaUsers } from "react-icons/fa";
 
 type SidebarProps = {
@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
       </div>
       <hr />
       <div className="bg-black pt-3 h-full pb-14" >
-      <Scrollbars autoHide >
+      <Scrollbar autoHide >
         <ul className=" text-white font-semibold text-sm flex flex-col">
           <Link to="/" className="mb-1 p-0">
             <li
@@ -432,7 +432,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarToggle }) => {
             </li>
           </Link> */}
         </ul>
-        </Scrollbars>
+        </Scrollbar>
       </div>
     </div>
   );

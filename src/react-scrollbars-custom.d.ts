@@ -1,4 +1,4 @@
-declare module 'react-custom-scrollbars' {
+declare module 'react-scrollbars-custom' {
     import * as React from 'react';
   
     export interface ScrollbarProps {
@@ -24,7 +24,7 @@ declare module 'react-custom-scrollbars' {
       children?: React.ReactNode;
     }
   
-    export class Scrollbars extends React.Component<ScrollbarProps, any> {
+    export class Scrollbar extends React.Component<ScrollbarProps, any> {
       scrollToTop: () => void;
       scrollToBottom: () => void;
       scrollToLeft: () => void;
